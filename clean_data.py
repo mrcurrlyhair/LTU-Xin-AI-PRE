@@ -10,3 +10,15 @@ trafficdata = trafficdata.drop_duplicates()
 
 # remove rows with missing data 
 trafficdata = trafficdata.dropna()
+
+# removing rows with any unknonw data 
+toremove = []
+
+for index, row in trafficdata.iterrows():
+    if "UNKNOWN" in row.astype(str).values:  
+        toremove.append(index)
+
+trafficdata = trafficdata.drop(toremove)
+
+
+print('data cleaned')
