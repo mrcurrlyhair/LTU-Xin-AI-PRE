@@ -11,7 +11,7 @@ trafficdata = trafficdata.drop_duplicates()
 # remove rows with missing data 
 trafficdata = trafficdata.dropna()
 
-# removing rows with any unknonw data 
+# removing rows with any unknown data 
 toremove = []
 
 for index, row in trafficdata.iterrows():
@@ -19,6 +19,9 @@ for index, row in trafficdata.iterrows():
         toremove.append(index)
 
 trafficdata = trafficdata.drop(toremove)
+
+#save changes 
+trafficdata.to_csv("cleaned_traffic_accidents.csv", index=False)
 
 
 print('data cleaned')
