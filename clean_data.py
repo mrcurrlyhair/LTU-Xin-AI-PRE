@@ -12,7 +12,9 @@ trafficdata = trafficdata.drop_duplicates()
 trafficdata = trafficdata.dropna()
 
 # removing columns whihc are not needed 
-trafficdata = trafficdata.drop(columns=['crash_day_of_week'])
+trafficdata = trafficdata.drop(columns=['crash_day_of_week', 'alignment', 'crash_date', 'crash_type', 'first_crash_type', 'damage', 'intersection_related_i'])
+
+
 
 # removing rows with any unknown data 
 toremove = []
@@ -25,12 +27,11 @@ trafficdata = trafficdata.drop(toremove)
 
 print('data cleaned')
 
-# OHE applied to weather condtion 
-trafficdata = pd.get_dummies(trafficdata, columns=['weather_condition'])
+# Applying OHE to multiple columns 
+OHE_Columns = ['weather_condition', 'lighting_condition', 'roadway_surface_cond', 
+                     'traffic_control_device', 'trafficway_type', 'road_defect', 'prim_contributory_cause']
 
-#save changes 
-trafficdata.to_csv("cleaned_traffic_accidents.csv", index=False)
-
+trafficdata = pd.get_dummies(trafficdata, columns=OHE_Columns)
 
 print('data prepared ')
 
