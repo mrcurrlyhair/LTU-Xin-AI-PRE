@@ -8,8 +8,8 @@ cleantrafficdata = pd.read_csv('cleaned_traffic_accidents.csv')
 # set size for all graphs
 plt.rcParams["figure.figsize"] = (10, 5)
 
-# creates a graph for all OHE data 
-def creat_graph(prefix, title):
+# def to create a graph 
+def create_graph(prefix, title):
     category_columns = [col for col in cleantrafficdata.columns if col.startswith(prefix)]
     category_counts = cleantrafficdata[category_columns].sum().sort_values(ascending=False)
     
@@ -22,9 +22,9 @@ def creat_graph(prefix, title):
     plt.grid(axis="y", linestyle="--", alpha=0.7)
     plt.show()
 
-# 
-creat_graph("weather_condition_", "Weather Condition")
-creat_graph("lighting_condition_", "Lighting Condition")
-creat_graph("roadway_surface_cond_", "Roadway Surface Condition")
-creat_graph("prim_contributory_cause_", "Primary Contributory Cause")
-creat_graph("traffic_control_device_", "Traffic Control Device")
+# using def, creates a graph for OHE data
+create_graph("weather_condition_", "Weather Condition")
+create_graph("lighting_condition_", "Lighting Condition")
+create_graph("roadway_surface_cond_", "Roadway Surface Condition")
+create_graph("prim_contributory_cause_", "Primary Contributory Cause")
+create_graph("traffic_control_device_", "Traffic Control Device")
