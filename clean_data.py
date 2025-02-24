@@ -11,6 +11,9 @@ trafficdata = trafficdata.drop_duplicates()
 # remove rows with missing data 
 trafficdata = trafficdata.dropna()
 
+# removing columns whihc are not needed 
+trafficdata = trafficdata.drop(columns=['crash_day_of_week'])
+
 # removing rows with any unknown data 
 toremove = []
 
@@ -20,8 +23,18 @@ for index, row in trafficdata.iterrows():
 
 trafficdata = trafficdata.drop(toremove)
 
+print('data cleaned')
+
+# OHE applied to weather condtion 
+trafficdata = pd.get_dummies(trafficdata, columns=['weather_condition'])
+
 #save changes 
 trafficdata.to_csv("cleaned_traffic_accidents.csv", index=False)
 
 
-print('data cleaned')
+print('data prepared ')
+
+#save changes 
+trafficdata.to_csv("cleaned_traffic_accidents.csv", index=False)
+
+print('data saved')
