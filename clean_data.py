@@ -3,7 +3,6 @@ import pandas as pd
 # Traffic data location and opening 
 trafficdata = pd.read_csv('traffic_accidents.csv')
 
-
 # checking and removing duplicated data 
 trafficdata = trafficdata.drop_duplicates()
 
@@ -40,9 +39,3 @@ print('data prepared')
 trafficdata.to_csv("cleaned_traffic_accidents.csv", index=False)
 
 print('data saved')
-
-
-
-
-
-
