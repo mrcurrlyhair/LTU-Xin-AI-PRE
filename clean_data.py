@@ -31,6 +31,12 @@ to_integers = ['cars_involved', 'crash_day_of_week', 'injuries_total', 'injuries
 
 trafficdata[to_integers] = trafficdata[to_integers].astype(int)
 
+# convertin fatal to boolean
+def tobinary(value):
+    return 1 if value > 0 else 0
+
+trafficdata['injuries_fatal'] = trafficdata['injuries_fatal'].apply(tobinary)
+
 # applying OHE to multiple columns 
 OHE_Columns = ['weather_condition', 'lighting_condition', 'roadway_surface_cond', 'traffic_control_device', 'trafficway_type', 'road_defect', 'prim_contributory_cause', 'most_severe_injury']
 
@@ -39,6 +45,6 @@ trafficdata = pd.get_dummies(trafficdata, columns=OHE_Columns)
 print('data prepared')
 
 #save changes 
-trafficdata.to_csv("cleaned_traffic_accidents.csv", index=False)
+trafficdata.to_csv('cleaned_traffic_accidents.csv', index=False)
 
 print('data saved')

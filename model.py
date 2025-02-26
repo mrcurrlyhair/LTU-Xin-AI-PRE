@@ -1,51 +1,77 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
-from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from imblearn.over_sampling import SMOTE
 
 
 
+# SPLITTING AND SCALING
 
+# clean traffic data location and opening 
+clean_traffic_data = pd.read_csv('cleaned_traffic_accidents.csv')
 
-#                                                       SPLITTING AND SCALING
-# clean traffic data location and opening
-clean_traffic_data = pd.read_csv("cleaned_traffic_accidents.csv")
+# define features 
+x = clean_traffic_data.drop(columns=['injuries_fatal', 'injuries_total', 'injuries_incapacitating', 'injuries_non_incapacitating', 'injuries_reported_not_evident', 'injuries_no_indication','most_severe_injury_FATAL', 'most_severe_injury_INCAPACITATING INJURY', 'most_severe_injury_NO INDICATION OF INJURY', 'most_severe_injury_NONINCAPACITATING INJURY', 'most_severe_injury_REPORTED, NOT EVIDENT'])
 
-# define features and target variable
-X = clean_traffic_data.drop(columns=["injuries_fatal"])
-y = clean_traffic_data["injuries_fatal"]
+y = clean_traffic_data['injuries_fatal']
 
 # split into 80% training and 20% testing data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=28, stratify=y)
 
+# integer columns NOT OHE
+intcolumns = ['cars_involved', 'crash_hour', 'crash_day_of_week']  
 
-# integer columns not OHE  
-numeric_features = ["cars_involved", "injuries_total", "crash_hour", "crash_day_of_week"]
-
-# scaler 
+# scaler
 scaler = StandardScaler()
 
-# fit and transform only the numeric features
-X_train[numeric_features] = scaler.fit_transform(X_train[numeric_features])
-X_test[numeric_features] = scaler.transform(X_test[numeric_features])
+# fit and transform only for integers 
+x_train[intcolumns] = scaler.fit_transform(x_train[intcolumns])
+x_test[intcolumns] = scaler.transform(x_test[intcolumns])
 
 
 
-#                                                       RANDOM FORREST 
-# Initialize the model
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+# SMOTE TO BALANCE DATA
 
-# Train the model
-rf_model.fit(X_train, y_train)
+# using SMOTE to balance the data
+smote = SMOTE(random_state=28)
+X_train_balanced, y_train_balanced = smote.fit_resample(x_train, y_train)
 
-# Make predictions
-rf_preds = rf_model.predict(X_test)
+# print new class distribution
+print('New Training Set Class Distribution:', y_train_balanced.value_counts())
 
-# Evaluate the model
-print("Random Forest Model Performance:")
-print(classification_report(y_test, rf_preds))
-print("Accuracy:", accuracy_score(y_test, rf_preds))
+# Print class distribution after SMOTE
+print("Original Class Distribution:\n", y_train.value_counts())
+print("New Class Distribution:\n", y_train_balanced.value_counts())
+
+
+
+# TRAIN & TEST RANDOM FOREST 
+
+# using random forrest model wth different parameters stopping overfitting
+rf_model = RandomForestClassifier(
+    n_estimators=500,  
+    random_state=28,
+    max_depth=30,  
+    min_samples_split=5,  
+    min_samples_leaf=10,  
+    class_weight={0: 1, 1: 20},  
+)
+
+# train the model using SMOTE data
+rf_model.fit(X_train_balanced, y_train_balanced)
+
+# make predictions
+rf_prediction = rf_model.predict(x_test)
+
+# test the model
+print('Random Forest Model Performance:')
+print(classification_report(y_test, rf_prediction))
+print('Accuracy:', accuracy_score(y_test, rf_prediction))
+
+
 
 
