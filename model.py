@@ -33,7 +33,7 @@ x_test[intcolumns] = scaler.transform(x_test[intcolumns])
 # SMOTE
 
 # using SMOTE to balance the data
-smote = SMOTE(random_state=28)
+smote = SMOTE(sampling_strategy='not majority', random_state=28)
 X_train_balanced, y_train_balanced = smote.fit_resample(x_train, y_train)
 
 # print class distribution after SMOTE
@@ -42,13 +42,13 @@ print("New Class Distribution:", y_train_balanced.value_counts())
 
 # TRAIN & TEST RANDOM FOREST 
 
-# Using Random Forest model for multiclass classification
+# using Random Forest model 
 rf_model = RandomForestClassifier(
-    n_estimators=500,  # Increase number of trees
+    n_estimators=500,  
     random_state=28,
-    max_depth=30,  # Allow deeper trees
-    min_samples_split=5,  # Reduce split threshold
-    min_samples_leaf=10,  # Lower leaf requirement
+    max_depth=30,  
+    min_samples_split=5,  
+    min_samples_leaf=10,  
 )
 
 # Train the model using SMOTE data
@@ -57,12 +57,12 @@ rf_model.fit(X_train_balanced, y_train_balanced)
 # Make predictions
 rf_prediction = rf_model.predict(x_test)
 
-# Test the model
+# test the model
 print('Random Forest Model Performance:')
 print(classification_report(y_test, rf_prediction))
 print('Accuracy:', accuracy_score(y_test, rf_prediction))
 
-# Confusion Matrix
+# Matrix
 conf_matrix = confusion_matrix(y_test, rf_prediction)
 sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['No Injury', 'Reported, Not Evident', 'Non-Incapacitating', 'Incapacitating', 'Fatal'], yticklabels=['No Injury', 'Reported, Not Evident', 'Non-Incapacitating', 'Incapacitating', 'Fatal'])
 plt.xlabel('Predicted')
