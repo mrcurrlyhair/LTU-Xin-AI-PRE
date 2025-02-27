@@ -1,6 +1,6 @@
 import pandas as pd
 
-# Traffic data location and opening 
+# traffic data location and opening 
 trafficdata = pd.read_csv('traffic_accidents.csv')
 
 # rename column
@@ -12,7 +12,7 @@ trafficdata = trafficdata.drop_duplicates()
 # remove rows with missing data 
 trafficdata = trafficdata.dropna()
 
-# removing columns whihc are not needed 
+# removing columns which are not needed 
 trafficdata = trafficdata.drop(columns=['alignment', 'crash_date', 'crash_type', 'first_crash_type', 'damage', 'intersection_related_i'])
 
 # removing rows with any unknown data 
@@ -24,27 +24,27 @@ for index, row in trafficdata.iterrows():
 
 trafficdata = trafficdata.drop(toremove)
 
-print('data cleaned')
+print('Data cleaned')
 
 # converting to integers 
-to_integers = ['cars_involved', 'crash_day_of_week', 'injuries_total', 'injuries_fatal', 'injuries_incapacitating', 'injuries_non_incapacitating', 'injuries_reported_not_evident', 'injuries_no_indication', 'crash_hour', 'crash_month']
+to_integers = ['cars_involved', 'crash_day_of_week', 'injuries_total', 'injuries_incapacitating', 'injuries_non_incapacitating', 'injuries_reported_not_evident', 'injuries_no_indication', 'crash_hour', 'crash_month']
 
 trafficdata[to_integers] = trafficdata[to_integers].astype(int)
 
-# convertin fatal to boolean
-def tobinary(value):
-    return 1 if value > 0 else 0
+# mapping most_severe_injury into numerical categories
+injury_mapping = {'NO INDICATION OF INJURY': 0, 'REPORTED, NOT EVIDENT': 1, 'NONINCAPACITATING INJURY': 2, 'INCAPACITATING INJURY': 3, 'FATAL': 4
+}
 
-trafficdata['injuries_fatal'] = trafficdata['injuries_fatal'].apply(tobinary)
+trafficdata['most_severe_injury'] = trafficdata['most_severe_injury'].map(injury_mapping)
 
-# applying OHE to multiple columns 
-OHE_Columns = ['weather_condition', 'lighting_condition', 'roadway_surface_cond', 'traffic_control_device', 'trafficway_type', 'road_defect', 'prim_contributory_cause', 'most_severe_injury']
+# applying OHE to multiple columns
+OHE_Columns = ['weather_condition', 'lighting_condition', 'roadway_surface_cond', 'traffic_control_device', 'trafficway_type', 'road_defect', 'prim_contributory_cause']
 
 trafficdata = pd.get_dummies(trafficdata, columns=OHE_Columns)
 
-print('data prepared')
+print('Data prepared')
 
-#save changes 
+# save changes 
 trafficdata.to_csv('cleaned_traffic_accidents.csv', index=False)
 
-print('data saved')
+print('Data saved')
